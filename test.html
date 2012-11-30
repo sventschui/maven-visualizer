@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<style>
+		.node {
+			
+		}
+		
+		.link {
+			stroke: #999;
+			stroke-opacity: .6;
+		}
+		</style>
+	</head>
+	<body>
+		<script src="http://d3js.org/d3.v3.min.js"></script>
+		<script>
+			
+			var width = 2280,
+			    height = 1700;
+			
+			var color = d3.scale.category20();
+			
+			var force = d3.layout.force()
+			    .charge(-350)
+			    .linkDistance(300)
+			    .size([width, height]);
+			
+			var svg = d3.select("body").append("svg")
+			    .attr("width", width)
+			    .attr("height", height);
+			
+				var graph = {nodes: [{groupId: "com.axa.ch.partnerrecorder", artifactId: "partnerrecorder-business-ear", version: "0.0.1-SNAPSHOT"},{groupId: "com.axa.ch.authorization", artifactId: "authorization-common", version: "0.0.1-SNAPSHOT"},{groupId: "com.axa.ch.presentation-services", artifactId: "presentation-services-commons", version: "null"},{groupId: "com.axa.ch.authorization", artifactId: "authorization-ear", version: "0.0.1-SNAPSHOT"},{groupId: "com.axa.ch.authorization", artifactId: "authorization-ejb", version: "null"},{groupId: "com.axa.ch.authorization", artifactId: "authorization-ejb", version: "0.0.1-SNAPSHOT"},{groupId: "com.axa.ch.authorization", artifactId: "authorization-common", version: "${project.version}"},{groupId: "com.axa.ch.authorization", artifactId: "authorization", version: "0.0.1-SNAPSHOT"},{groupId: "com.axa.ch.arch", artifactId: "bom", version: "42-SNAPSHOT"},{groupId: "com.axa.ch.brokernet", artifactId: "brokernet-common", version: "0.0.9-SNAPSHOT"},{groupId: "com.axa.ch.brokernet", artifactId: "brokernet-ear", version: "0.0.9-SNAPSHOT"},{groupId: "com.axa.ch.brokernet", artifactId: "brokernet-web", version: "null"},{groupId: "com.axa.ch.brokernet", artifactId: "brokernet-ejb", version: "null"},{groupId: "com.axa.ch.brokernet", artifactId: "brokernet-common", version: "null"},{groupId: "com.axa.ch.brokernet", artifactId: "brokernet-ejb", version: "0.0.9-SNAPSHOT"},{groupId: "com.axa.ch.brokernet", artifactId: "brokernet-web", version: "0.0.9-SNAPSHOT"},{groupId: "com.axa.ch.presentation-services", artifactId: "presentation-services-web", version: "null"},{groupId: "com.axa.ch.jsf2components", artifactId: "dynamischesEingabe", version: "null"},{groupId: "com.axa.ch.jsf2components", artifactId: "inputText", version: "null"},{groupId: "com.axa.ch.jsf2components", artifactId: "informationText", version: "null"},{groupId: "com.axa.ch.jsf2components", artifactId: "loadButton", version: "null"},{groupId: "com.axa.ch.jsf2components", artifactId: "policennummerEingabe", version: "null"},{groupId: "com.axa.ch.jsf2components", artifactId: "progressBar", version: "null"},{groupId: "com.axa.ch.jsf2components", artifactId: "tableHeader", version: "null"},{groupId: "com.axa.ch.jsf2components", artifactId: "accordion", version: "0.1.10"},{groupId: "com.axa.ch.test", artifactId: "container-test", version: "null"},{groupId: "com.axa.ch.brokernet", artifactId: "brokernet-web-business-delegates-parent", version: "0.0.9-SNAPSHOT"},{groupId: "com.axa.ch.brokernet", artifactId: "brokernet-web-business-delegates-mock", version: "0.0.9-SNAPSHOT"},{groupId: "com.axa.ch.presentation-model", artifactId: "presentation-model", version: "null"},{groupId: "com.axa.ch.brokernet", artifactId: "brokernet-web-business-delegates-ps", version: "0.0.9-SNAPSHOT"},{groupId: "com.axa.ch.brokernet", artifactId: "brokernet", version: "0.0.9-SNAPSHOT"},{groupId: "com.axa.ch.brokernet", artifactId: "brokernet-tools", version: "0.0.9-SNAPSHOT"},{groupId: "com.axa.ch.arch", artifactId: "code-service", version: "0.0.1"},{groupId: "com.axa.ch.cob", artifactId: "cob-ear", version: "13.0.9-SNAPSHOT"},{groupId: "com.axa.ch.cob", artifactId: "cob-ejb", version: "null"},{groupId: "com.axa.ch.cob", artifactId: "cob-ejb", version: "13.0.9-SNAPSHOT"},{groupId: "com.axa.ch.cob", artifactId: "cob-common", version: "null"},{groupId: "com.axa.ch.cob", artifactId: "cob-service-impl", version: "null"},{groupId: "com.axa.ch.cob", artifactId: "cob-util", version: "null"},{groupId: "com.axa.ch.cob", artifactId: "cob-business-ejb3-client-view", version: "null"},{groupId: "com.axa.ch.cob", artifactId: "cob-business-ejb-client-view", version: "null"},{groupId: "com.axa.ch.cob", artifactId: "cob-business-ejb", version: "null"},{groupId: "com.axa.ch.cob", artifactId: "cob", version: "13.0.9-SNAPSHOT"},{groupId: "com.axa.ch.arch", artifactId: "code-service", version: "0.0.2-SNAPSHOT"},{groupId: "com.axa.ch.partneraccess", artifactId: "partneraccess-business-ear", version: "0.0.9-SNAPSHOT"},{groupId: "com.axa.ch.partneraccess", artifactId: "partneraccess-common", version: "0.0.9-SNAPSHOT"},{groupId: "com.axa.ch.partneraccess", artifactId: "partneraccess-ejb", version: "0.0.9-SNAPSHOT"},{groupId: "com.axa.ch.partneraccess", artifactId: "partneraccess-common", version: "null"},{groupId: "com.axa.ch.partneraccess", artifactId: "partneraccess", version: "0.0.9-SNAPSHOT"},{groupId: "com.axa.ch", artifactId: "presentation-model", version: "0.0.7-SNAPSHOT"},{groupId: "com.axa.ch.presentation-model", artifactId: "presentation-model", version: "0.0.9-SNAPSHOT"},{groupId: "com.axa.ch.presentation-services", artifactId: "presentation-services", version: "0.1.1-SNAPSHOT"},{groupId: "com.axa.ch.presentation-services", artifactId: "presentation-services-commons", version: "0.1.1-SNAPSHOT"},{groupId: "com.axa.ch.presentation-services", artifactId: "presentation-services-web", version: "0.1.1-SNAPSHOT"},],links: [{source:1,target:2},{source:3,target:4},{source:5,target:6},{source:5,target:2},{source:10,target:11},{source:10,target:12},{source:10,target:13},{source:14,target:13},{source:14,target:2},{source:15,target:12},{source:15,target:13},{source:15,target:16},{source:15,target:17},{source:15,target:18},{source:15,target:19},{source:15,target:20},{source:15,target:21},{source:15,target:22},{source:15,target:23},{source:15,target:24},{source:15,target:25},{source:15,target:26},{source:15,target:1},{source:27,target:25},{source:27,target:28},{source:27,target:2},{source:27,target:26},{source:26,target:25},{source:26,target:28},{source:26,target:2},{source:29,target:25},{source:29,target:28},{source:29,target:2},{source:29,target:26},{source:31,target:13},{source:31,target:32},{source:31,target:2},{source:33,target:34},{source:35,target:2},{source:35,target:36},{source:35,target:37},{source:35,target:38},{source:35,target:39},{source:35,target:40},{source:35,target:41},{source:35,target:1},{source:45,target:2},{source:46,target:47},{source:46,target:2},{source:52,target:28},{source:53,target:2},]}
+				
+				
+			svg.append("svg:defs").selectAll("marker")
+				    .data(["marker"])
+				  .enter().append("svg:marker")
+				    .attr("id", "myMarker")
+				    .attr("viewBox", "0 -5 10 10")
+				    .attr("refX", 21)
+				    .attr("refY", 0)
+				    .attr("markerWidth", 6)
+				    .attr("markerHeight", 6)
+				    .attr("orient", "auto")
+				  .append("svg:path")
+				    .attr("d", "M0,-5L10,0L0,5");
+			
+			  force
+			      .nodes(graph.nodes)
+			      .links(graph.links)
+			      .start();
+			
+			  var link = svg.selectAll("line.link")
+			      .data(graph.links)
+			    .enter().append("line")
+			      .attr("class", "link")
+			      .style("stroke-width", 1)
+				    .attr("marker-end", function(d) { return "url(#myMarker)"; });
+			
+			  var node = svg.selectAll(".node")
+			      .data(graph.nodes)
+			    .enter().append("svg:text")
+			      .attr("class", "node")
+			      .style("fill", function(d) { return color(d.group); })
+			      .text(function(d) { return d.artifactId; })
+			      .call(force.drag);
+			
+			  node.append("text")
+			      .text(function(d) { return d.artifactId; });
+			
+			  force.on("tick", function() {
+			    link.attr("x1", function(d) { return d.source.x; })
+			        .attr("y1", function(d) { return d.source.y; })
+			        .attr("x2", function(d) { return d.target.x; })
+			        .attr("y2", function(d) { return d.target.y; });
+			
+			    node.attr("x", function(d) { return d.x; })
+			        .attr("y", function(d) { return d.y; });
+			  });
+			
+		</script>
+	</body>
+</html>
