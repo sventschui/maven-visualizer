@@ -20,8 +20,6 @@
 			var width = 2280,
 			    height = 1700;
 			
-			var color = d3.scale.category20();
-			
 			var force = d3.layout.force()
 			    .charge(-350)
 			    .linkDistance(300)
@@ -63,7 +61,7 @@
 			      .data(graph.nodes)
 			    .enter().append("svg:text")
 			      .attr("class", "node")
-			      .style("fill", function(d) { return color(d.group); })
+			      .style("fill", function(d) { return "black"; })
 			      .text(function(d) { return d.artifactId; })
 			      .call(force.drag);
 			
