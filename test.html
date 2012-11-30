@@ -17,8 +17,8 @@
 		<script src="http://d3js.org/d3.v3.min.js"></script>
 		<script>
 			
-			var width = 2280,
-			    height = 1700;
+			var width = document.documentElement.clientWidth,
+			    height = document.documentElement.clientHeight;
 			
 			var force = d3.layout.force()
 			    .charge(-350)
