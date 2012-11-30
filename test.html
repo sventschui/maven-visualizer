@@ -67,9 +67,6 @@
 			      .text(function(d) { return d.artifactId; })
 			      .call(force.drag);
 			
-			  node.append("text")
-			      .text(function(d) { return d.artifactId; });
-			
 			  force.on("tick", function() {
 			    link.attr("x1", function(d) { return d.source.x; })
 			        .attr("y1", function(d) { return d.source.y; })

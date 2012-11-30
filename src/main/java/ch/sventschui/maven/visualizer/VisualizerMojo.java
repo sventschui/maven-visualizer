@@ -36,7 +36,7 @@ import ch.sventschui.maven.visualizer.model.MavenArtifactStore;
 /**
  * Goal which touches a timestamp file.
  * 
- * @goal touch
+ * @goal visualize
  * 
  * @phase process-sources
  */
@@ -105,11 +105,11 @@ public class VisualizerMojo extends AbstractMojo {
 
                 for (Dependency artifact : project.getDependencies()) {
                     if (matchesFilter(artifact.getGroupId())) {
-                        MavenArtifact a = new MavenArtifact(artifact.getGroupId(), artifact.getArtifactId(),
+                        MavenArtifact dependency = new MavenArtifact(artifact.getGroupId(), artifact.getArtifactId(),
                                 artifact.getVersion());
 
-                        store.addArtifact(a);
-                        store.addRelationship(base, a);
+                        store.addArtifact(dependency);
+                        store.addRelationship(base, dependency);
                     }
                 }
             }
