@@ -36,7 +36,7 @@ import ch.sventschui.maven.visualizer.model.MavenArtifact;
 import ch.sventschui.maven.visualizer.model.MavenArtifactStore;
 
 /**
- * Goal which touches a timestamp file.
+ * Goal which creates the visualization
  * 
  * @goal visualize
  * 
@@ -47,20 +47,31 @@ public class VisualizerMojo extends AbstractMojo {
 			.getLogger(VisualizerMojo.class);
 
 	/**
-	 * Location of the file.
+	 * Project build directory (e.g. /target folder).
 	 * 
 	 * @parameter expression="${project.build.directory}"
 	 * @required
 	 */
 	private File projectBuildDir;
 
+	/**
+	 * visualizer folder within the project build directory
+	 */
 	private File outputDir = null;
 
+	/**
+	 * List of pom files to process
+	 */
 	private List<File> poms = new Vector<File>();
 
+	/**
+	 * Place to store maven artifacts and relationships
+	 */
 	private MavenArtifactStore store = new MavenArtifactStore();
 
 	/**
+	 * directories to search for pom files
+	 * 
 	 * @parameter
 	 * @required
 	 */
