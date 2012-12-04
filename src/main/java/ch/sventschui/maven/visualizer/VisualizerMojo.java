@@ -41,111 +41,117 @@ import ch.sventschui.maven.visualizer.model.MavenArtifactStore;
  * @phase process-sources
  */
 public class VisualizerMojo extends AbstractMojo {
-    /**
-     * Location of the file.
-     * @parameter expression="${project.build.directory}"
-     * @required
-     */
-    private File projectBuildDir;
+	/**
+	 * Location of the file.
+	 * 
+	 * @parameter expression="${project.build.directory}"
+	 * @required
+	 */
+	private File projectBuildDir;
 
-    private File outputDir = null;
+	/**
+	 * @parameter
+	 * @required
+	 */
+	private String[] directories;
 
-    private List<File> poms = new Vector<File>();
+	/**
+	 * @parameter
+	 * @required
+	 */
+	private MavenArtifactFilter filter = new MavenArtifactFilter();
 
-    private MavenArtifactStore store = new MavenArtifactStore();
+	private File outputDir = null;
 
-    /**
-     * @parameter
-     * @required
-     */
-    private String[] directories;
+	private List<File> poms = new Vector<File>();
 
-    /**
-     * @parameter
-     * @required
-     */
-    private String[] includes;
+	private MavenArtifactStore store = new MavenArtifactStore();
 
-    public void execute() throws MojoExecutionException {
+	public void execute() throws MojoExecutionException {
 
-        createOutputDir();
+		this.createOutputDir();
 
-        for (String directory : this.directories) {
-            poms.addAll(FileUtils.listFiles(new File(directory), new PomFileFilter(), new TargetFileFilter()));
-        }
+		for (String directory : this.directories) {
+			this.poms.addAll(FileUtils.listFiles(new File(directory),
+					new PomFileFilter(), new TargetFileFilter()));
+		}
 
-        for (File pom : poms) {
+		for (File pom : this.poms) {
 
-            Model model = null;
+			Model model = null;
 
-            FileReader reader = null;
+			FileReader reader = null;
 
-            MavenXpp3Reader mavenreader = new MavenXpp3Reader();
+			MavenXpp3Reader mavenreader = new MavenXpp3Reader();
 
-            try {
-                reader = new FileReader(pom);
-                model = mavenreader.read(reader);
-                model.setPomFile(pom);
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (XmlPullParserException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+			try {
+				reader = new FileReader(pom);
+				model = mavenreader.read(reader);
+				model.setPomFile(pom);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (XmlPullParserException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
-            MavenProject project = new MavenProject(model);
+			MavenProject project = new MavenProject(model);
 
-            if (this.matchesFilter(project.getGroupId())) {
+			MavenArtifact base = new MavenArtifact(project.getGroupId(),
+					project.getArtifactId(), project.getVersion());
 
-                MavenArtifact base = new MavenArtifact(project.getGroupId(), project.getArtifactId(),
-                        project.getVersion());
+			if (this.filter.matches(base)) {
 
-                store.addArtifact(base);
+				this.store.addArtifact(base);
 
-                for (Dependency artifact : project.getDependencies()) {
-                    if (matchesFilter(artifact.getGroupId())) {
-                        MavenArtifact dependency = new MavenArtifact(artifact.getGroupId(), artifact.getArtifactId(),
-                                artifact.getVersion());
+				for (Dependency artifact : project.getDependencies()) {
+					MavenArtifact dependency = new MavenArtifact(
+							artifact.getGroupId(), artifact.getArtifactId(),
+							artifact.getVersion());
 
-                        store.addArtifact(dependency);
-                        store.addRelationship(base, dependency);
-                    }
-                }
-            }
-        }
+					if (this.filter.matches(dependency)) {
+						this.store.addArtifact(dependency);
+						this.store.addRelationship(base, dependency);
+					}
+				}
+			}
+		}
 
-        try {
-            FileWriter fstream = new FileWriter(new File(outputDir, "test.json"));
-            BufferedWriter out = new BufferedWriter(fstream);
+		try {
+			FileWriter fstream = new FileWriter(new File(this.outputDir,
+					"test.json"));
+			BufferedWriter out = new BufferedWriter(fstream);
 
-            out.write(store.toJSON());
+			out.write(this.store.toJSON());
 
-            out.close();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-    }
+	}
 
-    private void createOutputDir() {
-        this.outputDir = new File(projectBuildDir, "visualizer");
+	private void createOutputDir() {
+		this.outputDir = new File(this.projectBuildDir, "visualizer");
 
-        // clean
-        if (this.outputDir.exists()) {
-            this.outputDir.delete();
-        }
+		// clean
+		if (this.outputDir.exists()) {
+			this.outputDir.delete();
+		}
 
-        // create
-        this.outputDir.mkdirs();
-    }
+		// create
+		this.outputDir.mkdirs();
+	}
 
-    public boolean matchesFilter(String groupId) {
-        for (String include : includes) {
-            if (groupId.startsWith(include)) return true;
-        }
-
-        return false;
-    }
+	// public boolean matchesFilter(String groupId) {
+	// // for (String include : this.includes) {
+	// // if (groupId.startsWith(include)) {
+	// // return true;
+	// // }
+	// // }
+	//
+	// return false;
+	// }
 }

@@ -15,11 +15,17 @@
 				<version>0.0.1-SNAPSHOT</version>
 				<configuration>
 					<directories>
-						<directory>C:/eplatform/ews/R_3.8/brokerportal</directory>
+						<directory>./</directory>
 					</directories>
-					<includes>
-						<include>com.axa.ch</include>
-					</includes>
+					<filter>
+						<includes>
+							<include>ch.sventschui.*</include>
+							<include>org.apache.maven.*</include>
+						</includes>
+						<excludes>
+							<exclude>org.apache.maven:maven-core</exclude>
+						</excludes>
+					</filter>
 				</configuration>
 			</plugin>
 		</plugins>
