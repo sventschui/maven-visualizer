@@ -144,14 +144,4 @@ public class VisualizerMojo extends AbstractMojo {
 		// create
 		this.outputDir.mkdirs();
 	}
-
-	// public boolean matchesFilter(String groupId) {
-	// // for (String include : this.includes) {
-	// // if (groupId.startsWith(include)) {
-	// // return true;
-	// // }
-	// // }
-	//
-	// return false;
-	// }
 }
