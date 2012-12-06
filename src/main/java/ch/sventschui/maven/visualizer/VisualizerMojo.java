@@ -32,6 +32,9 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.sventschui.maven.visualizer.filefilter.PomFileFilter;
+import ch.sventschui.maven.visualizer.filefilter.TargetFileFilter;
+
 import ch.sventschui.maven.visualizer.model.MavenArtifact;
 import ch.sventschui.maven.visualizer.model.MavenArtifactStore;
 
