@@ -43,9 +43,9 @@ import ch.sventschui.maven.visualizer.model.MavenArtifactStore;
  * @phase process-sources
  */
 public class VisualizerMojo extends AbstractMojo {
-	private static Logger logger = LoggerFactory
-			.getLogger(VisualizerMojo.class);
-
+    private static Logger logger = LoggerFactory
+            .getLogger(VisualizerMojo.class);
+    
 	/**
 	 * Location of the file.
 	 * 
@@ -53,12 +53,6 @@ public class VisualizerMojo extends AbstractMojo {
 	 * @required
 	 */
 	private File projectBuildDir;
-
-	private File outputDir = null;
-
-	private List<File> poms = new Vector<File>();
-
-	private MavenArtifactStore store = new MavenArtifactStore();
 
 	/**
 	 * @parameter
@@ -70,7 +64,13 @@ public class VisualizerMojo extends AbstractMojo {
 	 * @parameter
 	 * @required
 	 */
-	private String[] includes;
+	private MavenArtifactFilter filter = new MavenArtifactFilter();
+
+	private File outputDir = null;
+
+	private List<File> poms = new Vector<File>();
+
+	private MavenArtifactStore store = new MavenArtifactStore();
 
 	public void execute() throws MojoExecutionException {
 
@@ -94,26 +94,26 @@ public class VisualizerMojo extends AbstractMojo {
 				model = mavenreader.read(reader);
 				model.setPomFile(pom);
 			} catch (IOException e) {
-				logger.error("Failed to read pom " + pom.getAbsolutePath(), e);
-			} catch (XmlPullParserException e) {
-				logger.error("Failed to parse pom " + pom.getAbsolutePath(), e);
-			}
+                logger.error("Failed to read pom " + pom.getAbsolutePath(), e);
+            } catch (XmlPullParserException e) {
+                logger.error("Failed to parse pom " + pom.getAbsolutePath(), e);
+            }
 
 			MavenProject project = new MavenProject(model);
 
-			if (this.matchesFilter(project.getGroupId())) {
+			MavenArtifact base = new MavenArtifact(project.getGroupId(),
+					project.getArtifactId(), project.getVersion());
 
-				MavenArtifact base = new MavenArtifact(project.getGroupId(),
-						project.getArtifactId(), project.getVersion());
+			if (this.filter.matches(base)) {
 
 				this.store.addArtifact(base);
 
 				for (Dependency artifact : project.getDependencies()) {
-					if (this.matchesFilter(artifact.getGroupId())) {
-						MavenArtifact dependency = new MavenArtifact(
-								artifact.getGroupId(),
-								artifact.getArtifactId(), artifact.getVersion());
+					MavenArtifact dependency = new MavenArtifact(
+							artifact.getGroupId(), artifact.getArtifactId(),
+							artifact.getVersion());
 
+					if (this.filter.matches(dependency)) {
 						this.store.addArtifact(dependency);
 						this.store.addRelationship(base, dependency);
 					}
@@ -130,8 +130,8 @@ public class VisualizerMojo extends AbstractMojo {
 
 			out.close();
 		} catch (IOException e) {
-			logger.error("Failed to write result", e);
-		}
+            logger.error("Failed to write result", e);
+        }
 
 	}
 
@@ -145,15 +145,5 @@ public class VisualizerMojo extends AbstractMojo {
 
 		// create
 		this.outputDir.mkdirs();
-	}
-
-	public boolean matchesFilter(String groupId) {
-		for (String include : this.includes) {
-			if (groupId.startsWith(include)) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 }
