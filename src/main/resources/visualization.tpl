@@ -26,16 +26,19 @@
 			var width = document.documentElement.clientWidth,
 			    height = document.documentElement.clientHeight;
 			
+				var graph = #jsondata#
+			
+			var k = Math.sqrt(graph.nodes.length / (width * height));
+			
 			var force = d3.layout.force()
-			    .charge(-350)
+				.charge(function(d) { return -10 * (d.weight + 1) / k; })
+    			.gravity(200 * k)
 			    .linkDistance(300)
 			    .size([width, height]);
 			
 			var svg = d3.select("body").append("svg")
 			    .attr("width", width)
 			    .attr("height", height);
-			
-				var graph = #jsondata#
 				
 			svg.append("svg:defs").selectAll("marker")
 				    .data(["marker"])
@@ -91,13 +94,13 @@
 			  node.call(force.drag);
 			
 			  force.on("tick", function() {
-			    link.attr("x1", function(d) { return d.source.x - 10; })
-			        .attr("y1", function(d) { return d.source.y + 20; })
-			        .attr("x2", function(d) { return d.target.x - 10; })
-			        .attr("y2", function(d) { return d.target.y + 20; });
+			    link.attr("x1", function(d) { return d.source.x; })
+			        .attr("y1", function(d) { return d.source.y; })
+			        .attr("x2", function(d) { return d.target.x; })
+			        .attr("y2", function(d) { return d.target.y; });
 			
 			    node.attr("x", function(d) { return d.x; })
-			        .attr("y", function(d) { return d.y; });
+			        .attr("y", function(d) { return d.y - 20; });
 			  });
 			
 		</script>
