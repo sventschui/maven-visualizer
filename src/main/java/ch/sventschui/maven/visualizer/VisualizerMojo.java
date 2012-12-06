@@ -32,6 +32,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.sventschui.maven.visualizer.writer.VisualizationWriter;
+
 import ch.sventschui.maven.visualizer.model.filter.MavenArtifactFilter;
 
 
@@ -128,15 +130,9 @@ public class VisualizerMojo extends AbstractMojo {
 		}
 
 		try {
-			FileWriter fstream = new FileWriter(new File(this.outputDir,
-					"test.json"));
-			BufferedWriter out = new BufferedWriter(fstream);
-
-			out.write(this.store.toJSON());
-
-			out.close();
-		} catch (IOException e) {
-            logger.error("Failed to write result", e);
+            VisualizationWriter.writeVisualization(store, new File(this.outputDir, "visualization.html"));
+        } catch (IOException e) {
+            logger.error("Failed to write visualization", e);
         }
 
 	}
