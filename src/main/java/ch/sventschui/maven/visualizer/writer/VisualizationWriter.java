@@ -39,7 +39,7 @@ public class VisualizationWriter {
             String json = store.toJSON();
 
             while (null != (line = tpl.readLine())) {
-                line = line.replaceAll("\\$\\{json.data\\}", json);
+                line = line.replace("#jsondata#", json);
 
                 out.write(line + "\n");
             }

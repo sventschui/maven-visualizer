@@ -4,7 +4,13 @@
 		<meta charset="utf-8">
 		<style>
 		.node {
-			
+			font-family: Arial, sans-serif;
+			font-size: 11px;
+			line-height: 16px;
+		}
+		
+		.artifactId {
+			font-weight: bold;
 		}
 		
 		.link {
@@ -29,14 +35,14 @@
 			    .attr("width", width)
 			    .attr("height", height);
 			
-				var graph = ${json.data}
+				var graph = #jsondata#
 				
 			svg.append("svg:defs").selectAll("marker")
 				    .data(["marker"])
 				  .enter().append("svg:marker")
 				    .attr("id", "myMarker")
 				    .attr("viewBox", "0 -5 10 10")
-				    .attr("refX", 21)
+				    .attr("refX", 0)
 				    .attr("refY", 0)
 				    .attr("markerWidth", 6)
 				    .attr("markerHeight", 6)
@@ -57,18 +63,38 @@
 				    .attr("marker-end", function(d) { return "url(#myMarker)"; });
 			
 			  var node = svg.selectAll(".node")
-			      .data(graph.nodes)
-			    .enter().append("svg:text")
-			      .attr("class", "node")
+			      .data(graph.nodes).enter()
+			      .append("svg:svg")
+			      .attr("class", "node");
+			      
+			  node.append("svg:text")
 			      .style("fill", function(d) { return "black"; })
 			      .text(function(d) { return d.artifactId; })
-			      .call(force.drag);
+			      .attr("class", "artifactId")
+			  	  .attr("x", 0)
+			  	  .attr("y", 10);
+			      
+			  node.append("svg:text")
+			      .style("fill", function(d) { return "#555555"; })
+			      .text(function(d) { return d.groupId; })
+			      .attr("class", "groupId")
+			  	  .attr("x", 0)
+			  	  .attr("y", 25);
+			      
+			  node.append("svg:text")
+			      .style("fill", function(d) { return "#555555"; })
+			      .text(function(d) { return d.version; })
+			      .attr("class", "version")
+			  	  .attr("x", 0)
+			  	  .attr("y", 40);
+			  	  
+			  node.call(force.drag);
 			
 			  force.on("tick", function() {
-			    link.attr("x1", function(d) { return d.source.x; })
-			        .attr("y1", function(d) { return d.source.y; })
-			        .attr("x2", function(d) { return d.target.x; })
-			        .attr("y2", function(d) { return d.target.y; });
+			    link.attr("x1", function(d) { return d.source.x - 10; })
+			        .attr("y1", function(d) { return d.source.y + 20; })
+			        .attr("x2", function(d) { return d.target.x - 10; })
+			        .attr("y2", function(d) { return d.target.y + 20; });
 			
 			    node.attr("x", function(d) { return d.x; })
 			        .attr("y", function(d) { return d.y; });
