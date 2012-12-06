@@ -1,4 +1,4 @@
-package ch.sventschui.maven.visualizer;
+package ch.sventschui.maven.visualizer.model.filter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
