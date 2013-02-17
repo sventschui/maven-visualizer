@@ -1,4 +1,4 @@
-package ch.sventschui.maven.visualizer;
+package ch.sventschui.maven.visualizer.filefilter;
 
 import java.io.File;
 

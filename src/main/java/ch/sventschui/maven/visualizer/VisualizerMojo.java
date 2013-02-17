@@ -13,10 +13,8 @@ package ch.sventschui.maven.visualizer;
  * specific language governing permissions and limitations under the License.
  */
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
@@ -32,8 +30,12 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.sventschui.maven.visualizer.filefilter.PomFileFilter;
+import ch.sventschui.maven.visualizer.filefilter.TargetFileFilter;
 import ch.sventschui.maven.visualizer.model.MavenArtifact;
 import ch.sventschui.maven.visualizer.model.MavenArtifactStore;
+import ch.sventschui.maven.visualizer.model.filter.MavenArtifactFilter;
+import ch.sventschui.maven.visualizer.writer.VisualizationWriter;
 
 /**
  * Goal which creates the visualization
@@ -55,21 +57,6 @@ public class VisualizerMojo extends AbstractMojo {
 	private File projectBuildDir;
 
 	/**
-	 * visualizer folder within the project build directory
-	 */
-	private File outputDir = null;
-
-	/**
-	 * List of pom files to process
-	 */
-	private List<File> poms = new Vector<File>();
-
-	/**
-	 * Place to store maven artifacts and relationships
-	 */
-	private MavenArtifactStore store = new MavenArtifactStore();
-
-	/**
 	 * directories to search for pom files
 	 * 
 	 * @parameter
@@ -81,7 +68,13 @@ public class VisualizerMojo extends AbstractMojo {
 	 * @parameter
 	 * @required
 	 */
-	private String[] includes;
+	private MavenArtifactFilter filter = new MavenArtifactFilter();
+
+	private File outputDir = null;
+
+	private List<File> poms = new Vector<File>();
+
+	private MavenArtifactStore store = new MavenArtifactStore();
 
 	public void execute() throws MojoExecutionException {
 
@@ -112,19 +105,19 @@ public class VisualizerMojo extends AbstractMojo {
 
 			MavenProject project = new MavenProject(model);
 
-			if (this.matchesFilter(project.getGroupId())) {
+			MavenArtifact base = new MavenArtifact(project.getGroupId(),
+					project.getArtifactId(), project.getVersion());
 
-				MavenArtifact base = new MavenArtifact(project.getGroupId(),
-						project.getArtifactId(), project.getVersion());
+			if (this.filter.matches(base)) {
 
 				this.store.addArtifact(base);
 
 				for (Dependency artifact : project.getDependencies()) {
-					if (this.matchesFilter(artifact.getGroupId())) {
-						MavenArtifact dependency = new MavenArtifact(
-								artifact.getGroupId(),
-								artifact.getArtifactId(), artifact.getVersion());
+					MavenArtifact dependency = new MavenArtifact(
+							artifact.getGroupId(), artifact.getArtifactId(),
+							artifact.getVersion());
 
+					if (this.filter.matches(dependency)) {
 						this.store.addArtifact(dependency);
 						this.store.addRelationship(base, dependency);
 					}
@@ -133,15 +126,10 @@ public class VisualizerMojo extends AbstractMojo {
 		}
 
 		try {
-			FileWriter fstream = new FileWriter(new File(this.outputDir,
-					"test.json"));
-			BufferedWriter out = new BufferedWriter(fstream);
-
-			out.write(this.store.toJSON());
-
-			out.close();
+			VisualizationWriter.writeVisualization(this.store, new File(
+					this.outputDir, "visualization.html"));
 		} catch (IOException e) {
-			logger.error("Failed to write result", e);
+			logger.error("Failed to write visualization", e);
 		}
 
 	}
@@ -156,15 +144,5 @@ public class VisualizerMojo extends AbstractMojo {
 
 		// create
 		this.outputDir.mkdirs();
-	}
-
-	public boolean matchesFilter(String groupId) {
-		for (String include : this.includes) {
-			if (groupId.startsWith(include)) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 }
