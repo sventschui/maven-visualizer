@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import ch.sventschui.maven.visualizer.model.MavenArtifact;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Filter to determine whether a MavenArtifact should be included in the result.
@@ -17,7 +17,7 @@ public class MavenArtifactFilter {
 	 * List of RegEx to match artifact against to check if it should be included
 	 * in the result. Default everything is included.
 	 */
-	private List<String> includes = Arrays.asList(new String[] { "*" });
+    private List<String> includes = Arrays.asList(new String[] {".*"});
 
 	/**
 	 * List of RegEx to match artifact against to check if it should be excluded
@@ -33,7 +33,7 @@ public class MavenArtifactFilter {
 	 *            MavenArtifact to check
 	 * @return true if the MavenArtifact should be included in the result
 	 */
-	public boolean matches(MavenArtifact artifact) {
+    public boolean matches(MavenProject artifact) {
 		String name = artifact.getGroupId() + ":" + artifact.getArtifactId();
 
 		// first check excludes since they're heavier weightned

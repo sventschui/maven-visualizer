@@ -15,15 +15,15 @@
 				<version>0.0.1-SNAPSHOT</version>
 				<configuration>
 					<directories>
-						<directory>./</directory>
+						<directory>../</directory>
 					</directories>
 					<filter>
-						<includes>
-							<include>ch.sventschui.*</include>
-							<include>org.apache.maven.*</include>
-						</includes>
 						<excludes>
-							<exclude>org.apache.maven:maven-core</exclude>
+							<exclude>com.axa.ch:super</exclude>
+							<exclude>com.axa.ch.arch:total</exclude>
+							<exclude>com.axa.ch.brokernet:total</exclude>
+							<exclude>com.axa.ch.presentation-services:total</exclude>
+							<exclude>ch.sventschui.maven:visualizer</exclude>
 						</excludes>
 					</filter>
 				</configuration>
