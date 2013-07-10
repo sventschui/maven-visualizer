@@ -1,7 +1,9 @@
 package ch.sventschui.maven.visualizer.neu.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class VisualizerArtifact {
     private String groupId;
@@ -10,7 +12,7 @@ public class VisualizerArtifact {
 
     private String version;
 
-    private List<VisualizerArtifact> depedencies = new ArrayList<VisualizerArtifact>();
+    private Map<VisualizerArtifact, String> depedencies = new HashMap<VisualizerArtifact, String>();
 
     private List<VisualizerArtifact> modules = new ArrayList<VisualizerArtifact>();
 
@@ -44,11 +46,11 @@ public class VisualizerArtifact {
         this.version = version;
     }
 
-    public List<VisualizerArtifact> getDepedencies() {
+    public Map<VisualizerArtifact, String> getDepedencies() {
         return depedencies;
     }
 
-    public void setDepedencies(List<VisualizerArtifact> depedencies) {
+    public void setDepedencies(Map<VisualizerArtifact, String> depedencies) {
         this.depedencies = depedencies;
     }
 
@@ -58,6 +60,11 @@ public class VisualizerArtifact {
 
     public void setModules(List<VisualizerArtifact> modules) {
         this.modules = modules;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s:%s:%s", this.groupId, this.artifactId, this.version);
     }
 
 }

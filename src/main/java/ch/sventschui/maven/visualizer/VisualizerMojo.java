@@ -14,8 +14,7 @@ package ch.sventschui.maven.visualizer;
  */
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -23,13 +22,11 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.model.Dependency;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,6 +81,8 @@ public class VisualizerMojo extends AbstractMojo {
 
     private Map<String, VisualizerArtifact> parents = new HashMap<String, VisualizerArtifact>();
 
+    private PomResolver resolver = new PomResolver();
+
     public void execute() throws MojoExecutionException {
 
         this.createOutputDir();
@@ -94,7 +93,12 @@ public class VisualizerMojo extends AbstractMojo {
 
         for (File pom : this.poms) {
 
-            MavenProject project = projectForPom(pom);
+            MavenProject project;
+            try {
+                project = resolver.loadProjectFromFile(pom);
+            } catch (PomResolverException e) {
+                throw new MojoExecutionException(e.getMessage(), e);
+            }
 
             if (this.filter.matches(project)) {
                 projects.put(project, pom);
@@ -133,11 +137,20 @@ public class VisualizerMojo extends AbstractMojo {
                 File pom = new File(projects.get(p).getParent(), mName + "/pom.xml");
 
                 if (!pom.isFile()) {
-                    System.out.println("Pom does not exist:" + pom.getAbsolutePath());
+                    System.out.println("Pom does not h:" + pom.getAbsolutePath());
                     continue;
                 }
 
-                MavenProject m = projectForPom(pom);
+                MavenProject m;
+                try {
+                    m = resolver.loadProjectFromFile(pom);
+                } catch (PomResolverException e) {
+                    throw new MojoExecutionException(e.getMessage(), e);
+                }
+
+                if (m.getModules() == null || m.getModules().isEmpty()) {
+                    continue;
+                }
 
                 String key = m.getGroupId() + ":" + m.getArtifactId();
 
@@ -167,7 +180,17 @@ public class VisualizerMojo extends AbstractMojo {
                 VisualizerArtifact dep = artifacts.get(key);
 
                 if (dep != null) {
-                    a.getDepedencies().add(dep);
+                    List<String> labels = new ArrayList<String>();
+
+                    if (d.getScope() != null) {
+                        labels.add(d.getScope());
+                    }
+
+                    if (d.getClassifier() != null) {
+                        labels.add(d.getClassifier());
+                    }
+
+                    a.getDepedencies().put(dep, StringUtils.join(labels, " / "));
                 }
 
             }
@@ -218,27 +241,6 @@ public class VisualizerMojo extends AbstractMojo {
          */
     }
 
-    private MavenProject projectForPom(File pom) {
-
-        Model model = null;
-
-        FileReader reader = null;
-
-        MavenXpp3Reader mavenreader = new MavenXpp3Reader();
-
-        try {
-            reader = new FileReader(pom);
-            model = mavenreader.read(reader);
-            model.setPomFile(pom);
-        } catch (IOException e) {
-            logger.error("Failed to read pom " + pom.getAbsolutePath(), e);
-        } catch (XmlPullParserException e) {
-            logger.error("Failed to parse pom " + pom.getAbsolutePath(), e);
-        }
-
-        return new MavenProject(model);
-    }
-
     private void printArtifacts(Collection<VisualizerArtifact> artifacts, String indent) {
 
         for (VisualizerArtifact a : artifacts) {
@@ -251,9 +253,12 @@ public class VisualizerMojo extends AbstractMojo {
 
             // System.out.println(indent + a.getGroupId() + ":" + a.getArtifactId() + ":" + a.getVersion());
 
-            for (VisualizerArtifact d : a.getDepedencies()) {
+            for (VisualizerArtifact d : a.getDepedencies().keySet()) {
 
-                System.out.println("\"" + a.getArtifactId() + "\" -> \"" + d.getArtifactId() + "\";");
+                System.out.println(String.format("\"%s\" -> \"%s\" [label=\"%s\"];", a.getArtifactId(),
+                        d.getArtifactId(), a.getDepedencies().get(d)));
+
+                // System.out.println("\"" + a.getArtifactId() + "\" -> \"" + d.getArtifactId() + "\";");
 
                 // System.out.println(indent + "- depends on: " + d.getGroupId() + ":" + d.getArtifactId() + ":"
                 // + d.getVersion());

@@ -19,6 +19,10 @@
 					</directories>
 					<filter>
 						<excludes>
+							<exclude>awesome:awesome</exclude>
+							<exclude>awesome:awesome-ear</exclude>
+							<exclude>awesome:awesome-ejb</exclude>
+							<exclude>awesome:awesome-jar</exclude>
 							<exclude>com.axa.ch:super</exclude>
 							<exclude>com.axa.ch.arch:total</exclude>
 							<exclude>com.axa.ch.brokernet:total</exclude>
@@ -70,6 +74,11 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
 			<version>1.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
 		</dependency>
 	</dependencies>
 </project>
