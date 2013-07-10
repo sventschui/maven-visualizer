@@ -95,6 +95,7 @@ public class VisualizerMojo extends AbstractMojo {
         for (File pom : this.poms) {
 
             MavenProject project = projectForPom(pom);
+            System.out.println(pom);
 
             if (this.filter.matches(project)) {
                 projects.put(project, pom);

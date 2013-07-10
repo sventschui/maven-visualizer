@@ -15,7 +15,7 @@
 				<version>0.0.1-SNAPSHOT</version>
 				<configuration>
 					<directories>
-						<directory>../</directory>
+						<directory>C:\eplatform\ews\R_3.8\brokerportal</directory>
 					</directories>
 					<filter>
 						<excludes>
@@ -24,6 +24,8 @@
 							<exclude>com.axa.ch.brokernet:total</exclude>
 							<exclude>com.axa.ch.presentation-services:total</exclude>
 							<exclude>ch.sventschui.maven:visualizer</exclude>
+							<exclude>com.axa.ch.oms:total</exclude>
+							<exclude>com.axa.ch.oms:oms-main</exclude>
 						</excludes>
 					</filter>
 				</configuration>
