@@ -7,6 +7,9 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>visualizer Maven Mojo</name>
 	<url>http://maven.apache.org</url>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<build>
 		<plugins>
 			<plugin>
@@ -15,17 +18,11 @@
 				<version>0.0.1-SNAPSHOT</version>
 				<configuration>
 					<directories>
-						<directory>C:\eplatform\ews\R_3.8\brokerportal</directory>
+						<directory>C:\eplatform\ews\R_3.8\portal_components</directory>
 					</directories>
 					<filter>
 						<excludes>
-							<exclude>com.axa.ch:super</exclude>
-							<exclude>com.axa.ch.arch:total</exclude>
-							<exclude>com.axa.ch.brokernet:total</exclude>
-							<exclude>com.axa.ch.presentation-services:total</exclude>
 							<exclude>ch.sventschui.maven:visualizer</exclude>
-							<exclude>com.axa.ch.oms:total</exclude>
-							<exclude>com.axa.ch.oms:oms-main</exclude>
 						</excludes>
 					</filter>
 				</configuration>
