@@ -16,6 +16,7 @@ package ch.sventschui.maven.visualizer;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sonatype.aether.artifact.Artifact;
 
 import ch.sventschui.maven.visualizer.filefilter.PomFileFilter;
 import ch.sventschui.maven.visualizer.filefilter.TargetFileFilter;
@@ -83,6 +85,8 @@ public class VisualizerMojo extends AbstractMojo {
     private Map<String, VisualizerArtifact> artifacts = new HashMap<String, VisualizerArtifact>();
 
     private Map<String, VisualizerArtifact> parents = new HashMap<String, VisualizerArtifact>();
+
+    private List<VisualizerArtifact> processedArtifacts = new ArrayList<VisualizerArtifact>();
 
     public void execute() throws MojoExecutionException {
 
@@ -261,8 +265,9 @@ public class VisualizerMojo extends AbstractMojo {
 
             }
 
-            if (a.getModules().size() > 0) {
+            if (a.getModules().size() > 0 && !processedArtifacts.contains(a)) {
                 // System.out.println(indent + "- modules:");
+                processedArtifacts.add(a);
 
                 printArtifacts(a.getModules(), indent + "\t");
             }
