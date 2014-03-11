@@ -133,25 +133,28 @@ public class VisualizerMojo extends AbstractMojo {
         // Remove modules from parents
         for (MavenProject p : projects.keySet()) {
 
-            for (String mName : p.getModules()) {
+            //iteriert alle Module eines Projektes... 
+            for (String moduleName : p.getModules()) {
 
-                File pom = new File(projects.get(p).getParent(), mName + "/pom.xml");
+                File modulePom = new File(projects.get(p).getParent(), moduleName + "/pom.xml");
 
-                if (!pom.isFile()) {
-                    System.out.println("Pom does not exist:" + pom.getAbsolutePath());
+                if (!modulePom.isFile()) {
+                    System.out.println("Pom does not exist:" + modulePom.getAbsolutePath());
                     continue;
                 }
 
-                MavenProject m = projectForPom(pom);
+                MavenProject moduleProject = projectForPom(modulePom);
 
-                String key = m.getGroupId() + ":" + m.getArtifactId();
+                String keyModuleProject = moduleProject.getGroupId() + ":" + moduleProject.getArtifactId();
 
-                parents.remove(key);
+                //... und löscht diese Module von der Liste der Parents. 
+                //(ein Module kann kein Parent sein - das gilt aber nur nicht-mehrfach verschachtelten Projekten.) 
+                parents.remove(keyModuleProject);
 
-                VisualizerArtifact module = artifacts.get(key);
+                VisualizerArtifact module = artifacts.get(keyModuleProject);
 
                 if (module == null) {
-                    System.out.println("Can not get module for:" + mName);
+                    System.out.println("Can not get module for:" + moduleName);
                 }
 
                 artifacts.get(p.getGroupId() + ":" + p.getArtifactId()).getModules().add(module);
